@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="content-type" content="text/html" />
+    <meta name="author" content="https://github.com/jice1001" />
+    <title>websocket test</title>
+    <script>
+        var socket;
+        function Connect() {
+            try {
+                socket = new WebSocket("ws://127.0.0.1:3333/echo-protocol");
+            } catch (e) {
+                alert("error");
+                return;
+            }
+            socket.onopen = sOpen;
+            socket.onerror = sError;
+            socket.onmessage = sMessage;
+            socket.onclose = sClose;
+        }
+        function sOpen() {
+            alert("connect success!");
+        }
+        function sError(e) {
+            alert("error " + e);
+        }
+        function sMessage(msg) {
+            console.log(msg);
+        }
+        function sClose(e) {
+            alert("connect closed:" + e.code);
+        }
+        function Send() {
+            var jsonObject = {};
+            jsonObject.s = "";
+            jsonObject.sg = "";
+            jsonObject.t = "";
+            jsonObject.tg = document.getElementById("group").value;
+            jsonObject.c = document.getElementById("command").value;
+            jsonObject.v = document.getElementById("payload").value;
+            socket.send(JSON.stringify(jsonObject));
+        }
+        function SendPing() {
+            var jsonObject = {};
+            jsonObject.s = "websocket";
+            jsonObject.sg = "ws";
+            jsonObject.t = "hacktop8";
+            jsonObject.tg = "core";
+            jsonObject.c = "ping";
+            jsonObject.v = "";
+            socket.send(JSON.stringify(jsonObject));
+        }
+        function Close() {
+            socket.close();
+        }
+    </script>
+</head>
+
+<body>
+    <span>Group: <input id="group" type="text" /></span><br>
+    <span>Command: <input id="command" type="text" /></span><br>
+    <span>Payload: <input id="payload" type="text" /></span><br>
+    <button id="connect" onclick="Connect();">Connect</button>
+    <button id="send" onclick="Send();">Send</button>
+    <button id="ping" onclick="SendPing();">Ping</button>
+    <button id="close" onclick="Close();">Close</button>
+</body>
+
+</html>
